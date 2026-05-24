@@ -11,8 +11,7 @@ router = APIRouter(
 )
 
 
-## CRUD operations for portfolios 
-
+## CRUD operations for portfolios (without services or repository layers for simplicity)
 
 
 @router.get("/",response_model=list[portfolioResponse])
