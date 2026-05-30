@@ -1,8 +1,10 @@
 from rich.traceback import install
 install(show_locals=True)
 from fastapi import FastAPI
-from domains.portfolio.portfolio_router import router as portfolio_router
-from core.database import Base, engine
+from app.domains.portfolio.portfolio_router import router as portfolio_router
+from app.domains.asset.asset_router import router as asset_router
+from app.core.database import Base, engine
+from app.domains.user.user_router import router as user_router
 
 
 
@@ -13,3 +15,5 @@ app = FastAPI()
 
 
 app.include_router(portfolio_router)
+app.include_router(asset_router)
+app.include_router(user_router)
