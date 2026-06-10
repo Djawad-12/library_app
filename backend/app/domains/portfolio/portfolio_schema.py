@@ -22,6 +22,7 @@ class PortfolioResponseBasic(BaseModel):
     amount : int
     initial_deposit : int
     description : str
+    user_id : int
 
     class Config:
         from_attributes = True
@@ -33,6 +34,7 @@ class PortfolioResponse(BaseModel):
     amount : int
     initial_deposit : int
     description : str
+    user_id : int
     assets : List[AssetResponse] = Field(default_factory=list)
 
     class Config:

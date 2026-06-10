@@ -13,11 +13,19 @@ class PortfolioService:
     def get_all_portofolios(self) -> List[Portfolio] :
         return self.repo.get_all()
     
+    def get_all_portfolios_by_user_id(self, user_id : int) -> List[Portfolio] :
+        return self.repo.get_all_by_user_id(user_id)
+    
     def get_portfolio(self,id: int) -> Portfolio:
         return self.repo.get_portfolio_by_id(id)
     
-    def create_portfolio(self,name:str, initial_deposit : int, description : str | None) -> Portfolio:
+    def get_portfolio_by_user_id(self, user_id : int, portfolio_id : int) -> Portfolio :
+        return self.repo.get_portfolio_by_user_id(user_id, portfolio_id)
+    
+    
+    def create_portfolio(self,user_id : int, name:str, initial_deposit : int, description : str | None) -> Portfolio:
         portfolio = Portfolio(
+            user_id = user_id,
             name = name,
             initial_deposit = initial_deposit,
             amount = initial_deposit,
@@ -26,8 +34,8 @@ class PortfolioService:
 
         return self.repo.create_portfolio(portfolio)
     
-    def update_portfolio(self, portfolio_id : int, name : str | None, amount : int | None, description : str | None) -> Portfolio :
-        portfolio = self.repo.get_portfolio_by_id(portfolio_id)
+    def update_portfolio(self, user_id : int, portfolio_id : int, name : str | None, amount : int | None, description : str | None) -> Portfolio :
+        portfolio = self.repo.get_portfolio_by_user_id(user_id, portfolio_id)
         if name is not None:
             portfolio.name = name
         if amount is not None :

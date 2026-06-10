@@ -10,6 +10,7 @@ class Portfolio(Base):
     amount = Column(Integer)
     initial_deposit = Column(Integer)
     description = Column(String)
+    user_id = Column(Integer, ForeignKey("users.id"))
 
 
 class AssetPortfolio(Base):

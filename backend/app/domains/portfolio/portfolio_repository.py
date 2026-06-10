@@ -14,6 +14,12 @@ class PortfolioRepository:
     def get_portfolio_by_id(self, portfolio_id : int) -> Portfolio:
         return  self.db.query(Portfolio).filter(portfolio_id == Portfolio.id).first()
     
+    def get_all_by_user_id(self, user_id : int) -> List[Portfolio] :
+        return self.db.query(Portfolio).filter(user_id == Portfolio.user_id).all()
+    
+    def get_portfolio_by_user_id(self, user_id : int, portfolio_id : int) -> Portfolio :
+        return self.db.query(Portfolio).filter(user_id == Portfolio.user_id, portfolio_id == Portfolio.id).first()
+
     def create_portfolio(self, portfolio : Portfolio) -> Portfolio:
         self.db.add(portfolio)
         self.db.commit()

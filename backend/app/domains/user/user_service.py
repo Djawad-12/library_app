@@ -41,6 +41,9 @@ class UserService:
     def get_user(self,identifier : str) -> User :
         return self.repo.get_user_by_id(identifier)
     
+    def get_user_by_db_id(self, user_id : int) -> User :
+        return self.repo.get_user_by_db_id(user_id)
+    
     def register_user(self, email :str, username: str, password: str) -> User:
         user = self.repo.get_user_by_id(email)
         if user is not None :
