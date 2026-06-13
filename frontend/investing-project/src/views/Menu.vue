@@ -6,37 +6,11 @@ import { Form } from '@primevue/forms';
 import Menubar from 'primevue/menubar';
 import Toolbar from 'primevue/toolbar';
 import axios from 'axios';
-import { useAuthStore } from '@/stores/login'
-import { useRouter } from 'vue-router'
-   
-const router = useRouter()
+
 
 const menuData = [
-  {label : 'Home',route : '/'},
-  {label : 'Sign Up',route : '/register'},
-  {label : 'Login', route :'/login'},
-
+  {label : 'Price',route : '/price'}
 ]
-
-const MenuDataLogged = [
-  {label : 'Price', route : '/price'},
-  {label : 'Portfolios', route : '/portfolios'},
-  {label : 'Logout', route : '/'}
-]
-
-
-
-const authStore = useAuthStore()
-
-async function isLogged(){
-       authStore.checkAuth()
-   
-}
-
-async function handleLogOut(){
-    authStore.logout()
-    router.push("/")
-}
 
 
 </script>
@@ -45,32 +19,9 @@ async function handleLogOut(){
 
 
 
-
+    
 <div>
-  <Menubar v-if="authStore.isAuthenticated" :model="MenuDataLogged" class = 'rounded-input'>
-    <template #start>
-    </template>
-    <template #item="{item, props, hasSubmenu, root}">
-        <a class=rounded-input v-if="item.route === '/'" @click="handleLogOut" custom>
-            <span><b>{{ item.label }}</b></span>
-            
-        </a>
-
-        <router-link class=rounded-input v-if="item.route != '/'" v-slot="{href, navigate, isActive}" :to="item.route" custom>
-      
-          <a v-ripple :class="['flex items-center', { 'active-link': isActive }]" 
-             v-bind="props.action" 
-             @click="navigate">
-            <span><b>{{ item.label }}</b></span>
-          </a>
-      </router-link>
-
-    </template>
-  </Menubar>
-
-
-
-      <Menubar v-else :model="menuData" class = 'rounded-input'>
+  <Menubar :model="menuData" class = 'rounded-input'>
     <template #start>
     </template>
     <template #item="{item, props, hasSubmenu, root}">
@@ -85,8 +36,6 @@ async function handleLogOut(){
 
     </template>
   </Menubar>
-
-
 </div>
 
 

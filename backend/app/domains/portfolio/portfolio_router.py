@@ -31,17 +31,19 @@ def get_all_portfolios(user_id:int = Depends(get_current_user), service: Portfol
 
     
 
-@router.get("/current}",response_model=list[PortfolioResponse])
+@router.get("/current",response_model=list[PortfolioResponse])
 def get_all_portfolios_by_user_id(user_id : int = Depends(get_current_user), service: PortfolioService = Depends(get_portfolio_service),
                                   user_service : UserService = Depends(get_user_service),
                                   asset_service : AssetService = Depends(get_asset_service),
                                   asset_portfolio_service : AssetPortfolioService = Depends(get_asset_portfolio_service)):
     """Get all portfolios by user id"""
+    print(f"USER :{user_id}")
     user = user_service.get_user_by_db_id(user_id)
     if user is None:
         raise HTTPException(status_code=404, detail="User not found")
     portfolios = service.get_all_portfolios_by_user_id(user_id)
     l_portfolio = []
+    
     for portfolio in portfolios :
         l = []
         assets = asset_portfolio_service.get_asset_by_portfolio_id(portfolio.id)
@@ -54,6 +56,8 @@ def get_all_portfolios_by_user_id(user_id : int = Depends(get_current_user), ser
                 description = portfolio.description,
                 user_id= portfolio.user_id
             ))
+            print("CHECK 1")
+        
         else :
             for asset in assets : 
                 l.append(asset_service.get_asset(asset.asset_ticker))
@@ -67,6 +71,7 @@ def get_all_portfolios_by_user_id(user_id : int = Depends(get_current_user), ser
             user_id = portfolio.user_id
             )
             )
+            
     return l_portfolio
 
 
@@ -78,8 +83,10 @@ def get_portfolio(portfolio_id : int,service:PortfolioService = Depends(get_port
                   user_id : int = Depends(get_current_user)):
     """Get a portfolio by id"""
     user = user_service.get_user_by_db_id(user_id)
+    print("CHECK0")
     if user.role != "admin":
         raise HTTPException(status_code=401,detail="You need elevated privileges")
+    print("CHECK1")
     assets = asset_portfolio_service.get_asset_by_portfolio_id(portfolio_id)
     db_portfolio = service.get_portfolio(portfolio_id)
     if db_portfolio is None:
@@ -88,7 +95,7 @@ def get_portfolio(portfolio_id : int,service:PortfolioService = Depends(get_port
     l = []
     for asset in assets : 
         l.append(asset_service.get_asset(asset.asset_ticker))
-    
+    print("WORKING") 
     return PortfolioResponse(
         id = portfolio_id,
         name = db_portfolio.name,
@@ -134,7 +141,7 @@ def create_portfolio(portfolio: PortfolioCreate,
                      service: PortfolioService = Depends(get_portfolio_service),
                      user_service : UserService = Depends(get_user_service),
                      user_id : int = Depends(get_current_user)):
-    """Create a new portfolio"""    
+    """Create a new portfolio"""   
     user = user_service.get_user_by_db_id(user_id)
     if user is None:
         raise HTTPException(status_code=404, detail="User not found")

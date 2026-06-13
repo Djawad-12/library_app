@@ -18,6 +18,7 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/user/token")
 
 async def get_current_user(token: str = Depends(oauth2_scheme), service: UserService = Depends(get_user_service)):
     try:
+        print(token)
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
         db_id: str = payload.get("sub")
         if db_id is None:

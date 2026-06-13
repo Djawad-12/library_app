@@ -2,7 +2,7 @@ from fastapi import Depends, HTTPException, APIRouter
 from fastapi.security import OAuth2PasswordRequestForm
 from .user_service import UserService
 from app.core.dependancies import get_user_service
-from .user_schema import UserCreate, UserLogin, UserResponse
+from .user_schema import TokenResponse, UserCreate, UserLogin, UserResponse, TokenResponse   
 from datetime import timedelta, datetime, timezone
 from jose import JWTError, jwt
 from ...middlewares.middleware_authentification import get_current_user
@@ -56,7 +56,7 @@ def register(user : UserCreate, service:UserService = Depends(get_user_service))
     
     return user_register
 
-@router.post("/token",response_model=dict)
+@router.post("/token",response_model=TokenResponse)
 async def login(form : OAuth2PasswordRequestForm = Depends(), service : UserService = Depends(get_user_service)):
     user = service.login_user(form.username, form.password)
     if not user : 
@@ -64,7 +64,7 @@ async def login(form : OAuth2PasswordRequestForm = Depends(), service : UserServ
     token = create_access_token(
         data = {"sub" : str(user.id)}
     )
-    return {"access_token" : token, "token_type" : "bearer"}
+    return {"access_token" : token, "token_type" : "bearer", "user": user}
 
 
 
