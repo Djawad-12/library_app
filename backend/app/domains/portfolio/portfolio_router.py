@@ -1,9 +1,11 @@
+from os import name
+
 from fastapi import APIRouter, Depends, HTTPException
 from app.core.database import get_db
 from .portfolio_schema import PortfolioCreate, PortfolioResponse, PortfolioUpdate, PortfolioResponseBasic
 from sqlalchemy.orm import Session
 from .portfolio_service import PortfolioService, AssetPortfolioService
-from ..asset.asset_schema import AssetResponse
+from ..asset.asset_schema import AssetResponse, AssetResponsePortfolio
 from ..asset.asset_service import AssetService
 from app.core.dependancies import get_portfolio_service, get_asset_portfolio_service, get_asset_service
 from app.domains.user.user_service import UserService
@@ -59,8 +61,14 @@ def get_all_portfolios_by_user_id(user_id : int = Depends(get_current_user), ser
             print("CHECK 1")
         
         else :
-            for asset in assets : 
-                l.append(asset_service.get_asset(asset.asset_ticker))
+            for asset in assets :
+                asset_data = asset_service.get_asset(asset.asset_ticker)
+                l.append(AssetResponsePortfolio(
+                    ticker = asset_data.ticker,
+                    name = asset_data.name,
+                    market = asset_data.market,
+                    quantity = asset.quantity        
+                          ))
             l_portfolio.append(PortfolioResponse(
             id = portfolio.id,
             name = portfolio.name,
@@ -71,6 +79,7 @@ def get_all_portfolios_by_user_id(user_id : int = Depends(get_current_user), ser
             user_id = portfolio.user_id
             )
             )
+            print(f"{l} WTF")
             
     return l_portfolio
 
@@ -174,7 +183,7 @@ def update_portfolio(portfolio_id: int, portfolio: PortfolioUpdate,
 
 
 @router.put("/{portfolio_id}/{ticker}",response_model=str)
-def add_asset_to_portfolio(portfolio_id : int, ticker : str, 
+def add_asset_to_portfolio(portfolio_id : int, ticker : str, quantity : float, 
                            asset_portfolio_service : AssetPortfolioService = Depends(get_asset_portfolio_service),
                            user_id :int = Depends(get_current_user),
                            user_service : UserService = Depends(get_user_service)):
@@ -182,13 +191,13 @@ def add_asset_to_portfolio(portfolio_id : int, ticker : str,
     user = user_service.get_user_by_db_id(user_id)
     if user.role != "admin" :
         raise HTTPException(status_code=401,detail="You need elevated privileges")
-    result = asset_portfolio_service.add_asset_to_portfolio(portfolio_id, ticker)
+    result = asset_portfolio_service.add_asset_to_portfolio(portfolio_id, ticker,quantity)
 
     return result
 
 
-@router.put("/current/{portfolio_id}/{ticker}",response_model=str)
-def add_asset_to_portfolio_by_user(portfolio_id : int, ticker : str, 
+@router.put("/current/{portfolio_id}/{ticker}/{quantity}",response_model=str)
+def add_asset_to_portfolio_by_user(portfolio_id : int, ticker : str, quantity : float,
                            asset_portfolio_service : AssetPortfolioService = Depends(get_asset_portfolio_service),
                            user_id :int = Depends(get_current_user),
                            user_service : UserService = Depends(get_user_service),
@@ -200,8 +209,8 @@ def add_asset_to_portfolio_by_user(portfolio_id : int, ticker : str,
         portfolio = portfolio_service.get_portfolio_by_user_id(user_id,portfolio_id)
         if portfolio is None :
             raise HTTPException(status_code=401, detail="Portfolio doesn't exist")
-        result = asset_portfolio_service.add_asset_to_portfolio(portfolio_id, ticker)
+        result = asset_portfolio_service.add_asset_to_portfolio(portfolio_id, ticker,quantity)
     except Exception as e:
-        raise HTTPException(status_code=500, detail="Error occurred while adding asset to portfolio")
+        raise HTTPException(status_code=500, detail=f"Error occurred while adding asset to portfolio : {e}")
 
     return result

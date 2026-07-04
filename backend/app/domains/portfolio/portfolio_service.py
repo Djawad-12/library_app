@@ -59,15 +59,18 @@ class AssetPortfolioService:
     def get_asset_by_portfolio_id(self, portfolio_id: int) -> List[AssetPortfolio] :
         return self.repo.get_asset_by_portfolio_id(portfolio_id)
     
-    def add_asset_to_portfolio(self, portfolio_id: int,ticker : str) -> str | None :
+    def add_asset_to_portfolio(self, portfolio_id: int,ticker : str, quantity: float) -> str | None :
         try :
             asset = self.asset_repo.get_asset_by_id(ticker)
         except Exception :
             print("Asset not found")
             return None
+        if quantity <=0:
+            return None
         asset_portfolio = AssetPortfolio(
             portfolio_id = portfolio_id,
-            asset_ticker = ticker
+            asset_ticker = ticker,
+            quantity = quantity
         )
         self.repo.add_asset_in_portfolio(asset_portfolio)
 

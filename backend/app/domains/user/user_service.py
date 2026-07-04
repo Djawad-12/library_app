@@ -1,7 +1,7 @@
 from .user_db_model import User
 from .user_repository import UserRepository
 from typing import List
-from passlib.context import CryptContext
+
 from fastapi.security import OAuth2PasswordBearer
 from jose import jwt
 from datetime import datetime, timedelta, timezone
@@ -16,13 +16,18 @@ ACCESS_TOKEN_EXPIRE_MINUTES = int(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES"))
 
 
 
-pwd_context = CryptContext(schemes=["bcrypt"],deprecated = "auto")
+import bcrypt
 
 def hash_password(password : str) -> str:
-    return pwd_context.hash(password)
+    pwd_bytes = password.encode('utf-8')
+    salt = bcrypt.gensalt()
+    hashed = bcrypt.hashpw(pwd_bytes, salt)
+    return hashed.decode('utf-8')
 
 def verify_password(plain_password :str, hashed_password : str) -> bool:
-    return pwd_context.verify(plain_password, hashed_password)
+    pwd_bytes = plain_password.encode('utf-8')
+    hashed_bytes = hashed_password.encode('utf-8')
+    return bcrypt.checkpw(pwd_bytes, hashed_bytes)
 
 
 

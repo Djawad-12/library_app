@@ -1,6 +1,6 @@
 from pydantic import BaseModel, Field
 from typing import Optional, List
-from ..asset.asset_schema import AssetResponse
+from ..asset.asset_schema import AssetResponse, AssetResponsePortfolio
 
 
 
@@ -35,7 +35,7 @@ class PortfolioResponse(BaseModel):
     initial_deposit : int
     description : str
     user_id : int
-    assets : List[AssetResponse] = Field(default_factory=list)
+    assets : List[AssetResponsePortfolio] = Field(default_factory=list)
 
     class Config:
         from_attributes = True

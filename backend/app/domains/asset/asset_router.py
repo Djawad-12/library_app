@@ -15,7 +15,7 @@ def get_all_assets(service : AssetService = Depends(get_asset_service),
                    user_service : UserService = Depends(get_user_service),
                    user_id : int = Depends(get_current_user)):
     user = user_service.get_user_by_db_id(user_id)
-    if user.role != "admin":
+    if user is None:
         raise HTTPException(status_code=401, detail="You need elevated privileges")
     return service.get_all_assets()
 

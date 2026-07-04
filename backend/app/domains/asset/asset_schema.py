@@ -21,6 +21,18 @@ class AssetResponse(BaseModel):
     class Config:
         from_attributes = True
 
+
+
+class AssetResponsePortfolio(BaseModel):
+    ticker : str
+    name : str
+    market : str
+    quantity : float
+
+    class Config:
+        from_attributes = True
+
+
 class ImportAssetResponse(BaseModel):
     count : int
     markets : list[str]

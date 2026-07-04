@@ -18,5 +18,6 @@ class AssetPortfolio(Base):
     id = Column(Integer, primary_key= True)
     portfolio_id = Column(Integer, ForeignKey("portfolios.id"))
     asset_ticker = Column(String,ForeignKey("assets.ticker"))
+    quantity = Column(Float)
 
 
