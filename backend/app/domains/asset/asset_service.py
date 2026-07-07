@@ -63,7 +63,7 @@ class AssetService():
             return annual_returns.to_dict()
         except Exception :
             return None
-
+        
         
     
     
